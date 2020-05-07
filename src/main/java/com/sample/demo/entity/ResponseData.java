@@ -8,8 +8,14 @@ public class ResponseData {
 	String message;
 	ProductEntity entity;
 	List<ProductEntity> listEnity;
+	ProductImagesEntity productImagesEntity;
 	
-	
+	public ProductImagesEntity getProductImagesEntity() {
+		return productImagesEntity;
+	}
+	public void setProductImagesEntity(ProductImagesEntity productImagesEntity) {
+		this.productImagesEntity = productImagesEntity;
+	}
 	public List<ProductEntity> getListEnity() {
 		return listEnity;
 	}

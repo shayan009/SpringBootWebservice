@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.sample.demo.entity.ProductEntity;
+import com.sample.demo.entity.ProductImagesEntity;
 
 public interface ProductService {
 
 	ProductEntity insertProduct(ProductEntity productEntity);
-
+	
 	List<ProductEntity> listAll();
 
 	Optional<ProductEntity> findUserById(int userId);

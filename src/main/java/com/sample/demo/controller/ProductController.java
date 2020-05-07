@@ -14,11 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.sample.demo.entity.ProductEntity;
+import com.sample.demo.entity.ProductImagesEntity;
 import com.sample.demo.entity.ResponseData;
+import com.sample.demo.service.FileStorageServiceImpl;
 import com.sample.demo.service.ProductServiceImpl;
 
 import net.minidev.json.JSONObject;
@@ -31,6 +36,8 @@ public class ProductController {
 		@Autowired
 		private ProductServiceImpl applicationService;	
 	
+		@Autowired
+	    private FileStorageServiceImpl fileStorageService;
 	
 	
 	@PostMapping(value="/addProduct")
@@ -51,6 +58,39 @@ public class ProductController {
 
     }
 	
+	
+
+
+    @PostMapping("/uploadFile")
+    public ResponseEntity<ResponseData> uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("product_id") int productId) {
+        String fileName = fileStorageService.storeFile(file);
+        
+        ResponseData responseData=new ResponseData();
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/uploads/")
+            .path(fileName)
+            .build()
+            .toUriString();
+        
+        Optional<ProductEntity> entity=applicationService.findUserById(productId);
+        if(entity.isPresent()) {
+        	ProductEntity productEntity=entity.get();
+			responseData.setStatus(true);
+			responseData.setMessage("Product Image Inserted");
+			productEntity.setPath(fileDownloadUri);
+	     	responseData.setEntity(applicationService.insertProduct(productEntity));
+		}
+		else {
+			responseData.setStatus(false);
+			responseData.setMessage("Product Image Not Inserted");
+		}
+        return new ResponseEntity<>(responseData,HttpStatus.OK);
+		/*
+		 * return new Response(fileName, fileDownloadUri, file.getContentType(),
+		 * file.getSize());
+		 */
+    }
+
 	
 
 	  /**

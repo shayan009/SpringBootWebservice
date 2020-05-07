@@ -8,8 +8,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sample.demo.dao.ApplicationDao;
+import com.sample.demo.dao.ProductEntityDao;
 import com.sample.demo.entity.ProductEntity;
+import com.sample.demo.entity.ProductImagesEntity;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -17,8 +18,10 @@ public class ProductServiceImpl implements ProductService {
 	
 
 @Autowired
-private ApplicationDao applicationDao;
+private ProductEntityDao applicationDao;
 	
+
+
 
 
 @Override
@@ -36,5 +39,6 @@ public Optional<ProductEntity> findUserById(int userId) {
 	// TODO Auto-generated method stub
 	return applicationDao.findById(userId);
 }
+
 
 }
