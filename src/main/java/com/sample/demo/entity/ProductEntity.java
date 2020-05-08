@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "product")
-@SecondaryTable(name = "product_images")
+@SecondaryTable(name = "product_images",pkJoinColumns = @PrimaryKeyJoinColumn(name = "product_id"))
 public class ProductEntity {
 
 	@Id
@@ -12,8 +12,12 @@ public class ProductEntity {
 	private Integer id;
 	
 	
-	@Column(/* name="path", */table = "product_images")
-    private String path;
+	@Column(name="path",table = "product_images")
+    private String imagePath;
+	
+	@Column(name="id",table = "product_images")
+    private Integer imageId;
+	
 	
     private String name;
     private float price;
@@ -48,11 +52,11 @@ public class ProductEntity {
 	}
 
 	public String getPath() {
-		return path;
+		return imagePath;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setPath(String imagePath) {
+		this.imagePath = imagePath;
 	}
  
   
