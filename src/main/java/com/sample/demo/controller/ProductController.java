@@ -5,9 +5,12 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,21 +30,22 @@ import com.sample.demo.entity.ResponseData;
 import com.sample.demo.service.FileStorageServiceImpl;
 import com.sample.demo.service.ProductServiceImpl;
 
-import net.minidev.json.JSONObject;
 
 
 @RestController
 public class ProductController {
 
 
-		@Autowired
-		private ProductServiceImpl applicationService;	
+	@Autowired
+	private ProductServiceImpl applicationService;	
+
+	@Autowired
+    private FileStorageServiceImpl fileStorageService;
+
 	
-		@Autowired
-	    private FileStorageServiceImpl fileStorageService;
+
 	
-	
-	@PostMapping(value="/addProduct")
+	@PostMapping(value="/rest/addProduct",produces = "application/json")
     public ResponseEntity<ResponseData> createVehicle(@RequestBody ProductEntity productEntity){
 	ProductEntity entity=	applicationService.insertProduct(productEntity);
 	
@@ -61,7 +66,7 @@ public class ProductController {
 	
 
 
-    @PostMapping("/uploadFile")
+    @PostMapping("/rest/uploadFile")
     public ResponseEntity<ResponseData> uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("product_id") int productId) {
         String fileName = fileStorageService.storeFile(file);
         
@@ -97,7 +102,7 @@ public class ProductController {
 	   * Update product response entity.
 	  
 	   */
-	  @PutMapping("/product/{id}")
+	  @PutMapping("/rest/product/{id}")
 	  public ResponseEntity<ResponseData> updateProduct(@PathVariable(value = "id") int userId, @Valid @RequestBody ProductEntity productEntity) {
 	   
 		  Optional<ProductEntity> entity=applicationService.findUserById(userId);
@@ -120,8 +125,8 @@ public class ProductController {
 	  }
 	
 	
-	@GetMapping("/products")
-	public ResponseEntity<JSONObject> list() {
+	@GetMapping("/rest/products")
+	public @ResponseBody ResponseData list() {
 	
 		
 		ResponseData responseData=new ResponseData();
@@ -130,22 +135,28 @@ public class ProductController {
 		JSONObject obj=new JSONObject();
 		
 		if(productEntities.size()>0) {
-			obj.put("status", true);
-			obj.put("message", "Product Found");
-			obj.put("data",productEntities);
-			//responseData.setStatus(true);
-			//responseData.setMessage("Product Found");
-	     	//responseData.setListEnity(productEntities);
+			/*
+			 * try { obj.put("status", true); obj.put("message", "Product Found");
+			 * obj.put("data",productEntities); } catch (JSONException e) { // TODO
+			 * Auto-generated catch block e.printStackTrace(); }
+			 */
+			
+			responseData.setStatus(true);
+			responseData.setMessage("Product Found");
+	     	responseData.setListEnity(productEntities);
 		}
 		else {
 		
-			obj.put("status", true);
-			obj.put("message", "Product Not Found");
-			//responseData.setStatus(false);
-			//responseData.setMessage("Product Not Found");
+			/*
+			 * try { obj.put("status", true); obj.put("message", "Product Not Found");
+			 * 
+			 * } catch (JSONException e) { // TODO Auto-generated catch block
+			 * e.printStackTrace(); }
+			 */
+			responseData.setStatus(false);
+			responseData.setMessage("Product Not Found");
 		}
-		
-		return new ResponseEntity<>(obj,HttpStatus.OK);
+		 return responseData;
 		
 	}
 }
